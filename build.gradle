@@ -4,8 +4,10 @@ version '1.0-SNAPSHOT'
 apply plugin: 'java'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
+mainClassName = 'homo.efficio.springcamp2017.grpc.hello.HelloGrpcClientRunner'
 
 repositories {
     mavenCentral()
