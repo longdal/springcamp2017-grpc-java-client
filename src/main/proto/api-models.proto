@@ -1,0 +1,59 @@
+syntax = "proto3";
+import "geo.proto";
+
+option java_package = "com.linecorp.location.protocol";
+option java_multiple_files = true;
+
+// wraps a list of geohashes. Precision is arbitrary
+message Geohashes {
+    repeated string base32geohash = 1;
+    // note: we might eventually support binary geohash (arbitrary precision)
+}
+
+message MasterCodes {
+    repeated MasterCode masterCodes = 1;
+}
+
+message PaginationState {
+    string currentPageToken = 1;
+    string nextPageToken = 2;
+}
+
+message LocatedUsersPage {
+    repeated LocatedUser users = 1;
+    PaginationState paginationState = 2;
+}
+
+enum LocationError {
+    UNKNOWN_ERROR = 0;
+
+    NO_RECORD = 1;
+    STORAGE_EXCEPTION = 2;
+    NO_AGREEMENT = 3;
+}
+
+enum LocationCategory {
+    LAST = 0;
+    HOME = 1;
+    WORKPLACE = 2;
+}
+
+enum UserLocationTag {
+    AT_HOME = 0;
+    AT_WORKPLACE = 1;
+}
+
+message LastLocationFilter {
+    oneof sinceFilter {
+        // Known issue: this filter is not supported when several categories are selected.
+        int64 sinceTimestamp = 1;
+    }
+    // in case LAST is a selected category, filters LAST location by tag
+    repeated UserLocationTag locationTags = 2;
+}
+
+message LastLocation {
+    Location location = 1;
+    int64 refreshTimestamp = 2;
+    repeated UserLocationTag locationTags = 3;
+}

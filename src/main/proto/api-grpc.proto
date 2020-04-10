@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "api-rpc.proto";
+
+option java_package = "com.linecorp.location.protocol";
+option java_multiple_files = true;
+
+service LocationApis {
+    rpc GetLastLocation (LastLocationRequest) returns (LastLocationResponse);
+
+    rpc FindUsersByLocation (LookupByLocationRequest) returns (LookupByLocationResponse);
+
+    rpc GetUserProfile (UserProfileRequest) returns (UserProfileResponse);
+
+    // API to simulate mass delivery. Do not use in your code as it will be removed soon.
+    rpc CountUsersAtLocation (CountAtLocationRequest) returns (CountAtLocationResponse);
+}

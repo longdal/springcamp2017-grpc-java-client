@@ -1,0 +1,81 @@
+syntax = "proto3";
+import "geo.proto";
+import "api-models.proto";
+
+option java_package = "com.linecorp.location.protocol";
+option java_multiple_files = true;
+
+message LastLocationRequest {
+    string userMid = 1;
+    // Must be >=0. If not set, only return the last location.
+    // To get all versions, use a large enough number
+    int32 historyCount = 2;
+    oneof sinceFilter {
+        int64 sinceTimestamp = 3;
+    }
+}
+
+message LastLocationResponse {
+    oneof hasOrNot {
+        LocationError locationError = 1;
+        LastLocation lastLocation = 2;
+    }
+    repeated LastLocation history = 3;
+}
+
+message LookupByLocationRequest {
+    string pageToken = 1;
+    int64 pageSize = 2;
+    // what kind of location to search
+    repeated LocationCategory locationCategories = 3;
+    LastLocationFilter lastLocationFilter = 4;
+    oneof locationShape {
+        Geohashes geohashes = 5;
+        MasterCodes masterCodes = 6;
+    }
+}
+
+message LookupByLocationResponse {
+    oneof hasOrNot {
+        LocationError locationError = 1;
+        LocatedUsersPage locatedUsersPage = 2;
+    }
+}
+
+message CountAtLocationRequest {
+    repeated LocationCategory locationCategories = 1;
+    Geohashes geohashes = 2;
+    MasterCodes masterCodes = 3;
+    oneof sinceFilter {
+        // only supported when locationCategories == {LAST}
+        int64 sinceTimestamp = 4;
+    }
+    // default : 1 thread
+    // in current implementation, only input is chunked and parallelized
+    // note : geohash and master codes are always parallel
+    int32 parallelism = 5;
+}
+
+message CountAtLocationResponse {
+    oneof errorOrNot {
+        LocationError locationError = 1;
+        int32 usersCount = 2;
+    }
+}
+
+message UserProfileRequest {
+    string userMid = 1;
+}
+
+message UserProfileResponse {
+    oneof hasErrorOrNot {
+        LocationError locationError = 1;
+    }
+
+    // below fields are set when
+    // - we have them
+    // - and there was no error
+    // presence should be tested before use
+    Location homeSurmisedLocation = 10;
+    Location workplaceSurmisedLocation = 11;
+}

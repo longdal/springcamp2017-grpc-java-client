@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.linecorp.location.protocol.Geohashes;
+import com.linecorp.location.protocol.LocationApisGrpc;
+import com.linecorp.location.protocol.LookupByLocationRequest;
+import com.linecorp.location.protocol.LookupByLocationResponse;
+
 /**
  * @author homo.efficio@gmail.com
  *         created on 2017-04-12
@@ -16,10 +21,24 @@ public class HelloGrpcClient {
 
     private final Logger logger = Logger.getLogger(HelloGrpcClient.class.getName());
 
-    private final HelloSpringCampGrpc.HelloSpringCampBlockingStub blockingStub;
-    private final HelloSpringCampGrpc.HelloSpringCampStub asyncStub;
-    private final HelloSpringCampGrpc.HelloSpringCampFutureStub futureStub;
+    private final LocationApisGrpc.LocationApisBlockingStub blockingStub;
+    private final LocationApisGrpc.LocationApisStub asyncStub; 
+    private final LocationApisGrpc.LocationApisFutureStub futureStub; 
+    
+    //private final HelloSpringCampGrpc.HelloSpringCampBlockingStub blockingStub;
+    //private final HelloSpringCampGrpc.HelloSpringCampStub asyncStub;
+    //private final HelloSpringCampGrpc.HelloSpringCampFutureStub futureStub;
 
+
+    public HelloGrpcClient( LocationApisGrpc.LocationApisBlockingStub blockingStub,
+                            LocationApisGrpc.LocationApisStub asyncStub,
+                            LocationApisGrpc.LocationApisFutureStub futureStub) {
+        this.blockingStub = blockingStub;
+        this.asyncStub = asyncStub;
+        this.futureStub = futureStub;
+    }
+
+    /*
     public HelloGrpcClient(HelloSpringCampGrpc.HelloSpringCampBlockingStub blockingStub,
                            HelloSpringCampGrpc.HelloSpringCampStub asyncStub,
                            HelloSpringCampGrpc.HelloSpringCampFutureStub futureStub) {
@@ -27,24 +46,35 @@ public class HelloGrpcClient {
         this.asyncStub = asyncStub;
         this.futureStub = futureStub;
     }
+    */
 
     public void sendBlockingUnaryMessage(String clientName) {
 
         // 클라이언트 비즈니스 로직 수행 결과인 clientName으로 request 생성
-        HelloRequest request = HelloRequest.newBuilder().setClientName(clientName).build();
-        HelloResponse response;
+        LookupByLocationRequest request = LookupByLocationRequest.newBuilder()
+                                          .setPageSize(5L)
+                                          .setGeohashes(Geohashes.newBuilder()
+                                            .addBase32Geohash("xn774bvw")).build();
+
+        LookupByLocationResponse response;
+
+        //HelloRequest request = HelloRequest.newBuilder().setClientName(clientName).build();
+        //HelloResponse response;
 
         try {
-            logger.info("Unary Hello 서비스 호출, 메시지 [" + clientName + "]");
-            response = blockingStub.unaryHello(request);
+            //logger.info("Unary Hello 서비스 호출, 메시지 [" + clientName + "]");
+
+            response = blockingStub.findUsersByLocation(request);
+            //unaryHello(request);
         } catch (StatusRuntimeException e) {
             logger.log(Level.SEVERE, "Unary Hello 서비스 호출 중 실패: " + e.getStatus());
             return;
         }
 
-        logger.info("Unary Hello 서비스 응답: " + response.getWelcomeMessage());
+        logger.info("Unary Hello 서비스 응답: " + response.toString());
     }
 
+    /*
     public void sendAsyncUnaryMessage(String clientName) {
 
         // 클라이언트 비즈니스 로직 수행 결과인 clientName으로 request 생성
@@ -201,4 +231,5 @@ public class HelloGrpcClient {
 
         requestObserver.onCompleted();
     }
+    */
 }

@@ -10,20 +10,24 @@ public class HelloGrpcClientRunner {
 
     public static void main(String[] args) throws InterruptedException {
 
-        String host = "localhost";
-        int port = 54321;
-
+        String host = "location-api.line-apps-beta.com";
+        int port = 8080;
+        String beta_secret = "6oQPKzYUZEDNIlCBMXigKA";
+        String beta_token = "YmWd6SI5rlGVbl1z7feoESxJK5oR0+/dSZHpplYGC+0";
+       
         HelloGrpcClientStubFactory clientStubFactory =
                 new HelloGrpcClientStubFactory(host, port);
+                
 
         HelloGrpcClient grpcClient =
                 new HelloGrpcClient(clientStubFactory.getBlockingStub(),
                                     clientStubFactory.getAsyncStub(),
                                     clientStubFactory.getFutureStub());
 
+        
         // Blocking Unary
-//        grpcClient.sendBlockingUnaryMessage("Blocking Unary, gㅏ벼운 RPC, gPRC");
-//        clientStubFactory.shutdownChannel();
+        grpcClient.sendBlockingUnaryMessage("Blocking Unary, gㅏ벼운 RPC, gPRC");
+        clientStubFactory.shutdownChannel();
 
         // Async Unary
 //        grpcClient.sendAsyncUnaryMessage("Async Unary, gㅏ벼운 RPC, gRPC");
@@ -49,8 +53,10 @@ public class HelloGrpcClientRunner {
 //        clientStubFactory.shutdownChannel();
 
         // Bidirectional Client Streaming
+        /*
         grpcClient.sendBidirectionalStreamingMessage(Arrays.asList("Async Bidirectional Streaming,", "gㅏ벼운 RPC,", "gRPC"));
         Thread.sleep(3000);
         clientStubFactory.shutdownChannel();
+        */
     }
 }

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_package = "com.linecorp.location.protocol";
+option java_multiple_files = true;
+
+message Coordinates {
+    double latitude = 1;
+    double longitude = 2;
+}
+
+message MasterCode {
+    // codes are defined in https://git.linecorp.com/LAD/master-code/blob/develop/dist/area2.json
+    // the first item is level0 (country)
+    repeated string codes = 1;
+}
+
+message Location {
+    Coordinates latLon = 1;
+    string base32geohash = 2;
+    MasterCode masterCode = 3;
+    string country = 4;
+}
+
+message LocatedUser {
+    string userMid = 1;
+    // Server-side timestamp. Will be non-zero only for users matched via LAST category.
+    int64 receivedAtTimestamp = 2;
+}
